@@ -2,8 +2,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Comparator;
 
-public class Square {
+public class Square implements Comparable<Square>{
     private HashSet<Integer> candidates;
     private Integer row;
     private Integer col;
@@ -50,6 +51,11 @@ public class Square {
         if(candidates.contains(digit)){
             candidates.remove(digit);
         }
+    }
+
+    @Override
+    public int compareTo(Square s) {
+        return Integer.compare(candidates.size(), s.getCandidates().size());
     }
 
     // public void assignValue(Integer digit){

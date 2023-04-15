@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -68,6 +69,36 @@ public class SudokuAlgorithm{
             }
         }
         return true;
+    }
+
+    private boolean search(Square s) {
+        // Copy s's candidates
+        // If candidates is empty return false
+        // If the length of the candidate list is 1 for every square return true
+        // Sort the squares list using compareTo
+        // iterate through the list until the length of the candidate list is > 1
+        // for each candidate value, recursively search after assigning the value
+        // make sure that this is still valid
+        HashSet<Integer> otherCand =s.copyCandidates();
+        Collections.sort(squares);
+        if (otherCand.size() == 0) {
+            return false;
+        }
+        boolean solved = true;
+        for (Square sq : squares) {
+            if(s.getCandidates().size() != 1) {
+                solved = false;
+            }
+        }
+        if (solved) {
+            return solved;
+        }
+        Iterator<Square> iter = squares.iterator();
+        int size = 1;
+        while(iter.hasNext() && size == 1) {
+            Square sq = iter.next();
+            size = sq.getCandidates().size();
+        }
     }
 
     private boolean eliminateValue(Square s, int d){
