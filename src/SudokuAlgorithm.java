@@ -28,6 +28,18 @@ public class SudokuAlgorithm{
         initializePeers();
     }
 
+    private boolean solve() {
+        Collections.sort(squares);
+        Iterator<Square> iter = squares.iterator();
+        Square startSq = null;
+        int size = 1;
+        while (iter.hasNext() && size == 1) {
+            startSq = iter.next();
+            size = startSq.getCandidates().size();
+        }
+        return search(startSq.getCandidates());
+    }
+
     private void parseGrid(String grid){
         char[] gridChar = grid.toCharArray();
         for(int i = 0; i < squares.size(); i ++){
@@ -78,7 +90,7 @@ public class SudokuAlgorithm{
         }
         boolean solved = true;
         for (Square sq : squares) {
-            if(cands.size() != 1) {
+            if(sq.getCandidates().size() != 1) {
                 solved = false;
             }
         }
