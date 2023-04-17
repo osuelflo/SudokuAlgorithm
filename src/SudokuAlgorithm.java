@@ -28,17 +28,17 @@ public class SudokuAlgorithm{
         initializePeers();
     }
 
-    private boolean solve() {
-        Collections.sort(squares);
-        Iterator<Square> iter = squares.iterator();
-        Square startSq = null;
-        int size = 1;
-        while (iter.hasNext() && size == 1) {
-            startSq = iter.next();
-            size = startSq.getCandidates().size();
-        }
-        return search(startSq.getCandidates());
-    }
+    // private boolean solve() {
+    //     Collections.sort(squares);
+    //     Iterator<Square> iter = squares.iterator();
+    //     Square startSq = null;
+    //     int size = 1;
+    //     while (iter.hasNext() && size == 1) {
+    //         startSq = iter.next();
+    //         size = startSq.getCandidates().size();
+    //     }
+    //     return search();
+    // }
 
     private void parseGrid(String grid){
         char[] gridChar = grid.toCharArray();
@@ -83,15 +83,18 @@ public class SudokuAlgorithm{
         return true;
     }
 
-    private boolean search(HashSet<Integer> cands) {
+    private boolean search() {
         Collections.sort(squares);
-        if (cands.size() == 0) {
-            return false;
-        }
+        // if (cands.size() == 0) {
+        //     return false;
+        // }
         boolean solved = true;
         for (Square sq : squares) {
             if(sq.getCandidates().size() != 1) {
                 solved = false;
+            }
+            if(sq.getCandidates().size() == 0){
+                return false;
             }
         }
         if (solved) {
@@ -104,15 +107,18 @@ public class SudokuAlgorithm{
             sq = iter.next();
             size = sq.getCandidates().size();
         }
-        HashSet<Integer> sqCands = sq.getCandidates();
+        HashSet<Integer> sqCands = sq.copyCandidates();
         Iterator<Integer> setIter = sqCands.iterator();
         boolean temp = false;
         while(setIter.hasNext() && !temp) {
             int d = setIter.next();
-            assignValue(sq, d);
-            temp = search(sq.copyCandidates());
+            if(!assignValue(sq, d)){
+                return false;
+            }
+            temp = search();
+            sq.setCandidates(sqCands);
         }
-        return true;
+        return temp;
     }
 
     private boolean eliminateValue(Square s, int d){
@@ -247,11 +253,12 @@ public class SudokuAlgorithm{
         }
     }
     public static void main(String[] args) {
-        SudokuAlgorithm su = new SudokuAlgorithm();
-        su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300");
-        System.out.println(su.display());
+        // SudokuAlgorithm su = new SudokuAlgorithm();
+        // su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300");
+        // System.out.println(su.display());
         SudokuAlgorithm su2 = new SudokuAlgorithm();
         su2.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000");
+        su2.search();
         System.out.println(su2.display());
     }
 

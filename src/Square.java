@@ -69,6 +69,10 @@ public class Square implements Comparable<Square>{
     //     }
     // }
 
+    public void setCandidates(HashSet<Integer> cands){
+        candidates = cands;
+    }
+
     public HashSet<Integer> copyCandidates(){
         HashSet<Integer> cands = new HashSet<>();
         for(Integer s : candidates){
