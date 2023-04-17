@@ -71,22 +71,14 @@ public class SudokuAlgorithm{
         return true;
     }
 
-    private boolean search(Square s) {
-        // Copy s's candidates
-        // If candidates is empty return false
-        // If the length of the candidate list is 1 for every square return true
-        // Sort the squares list using compareTo
-        // iterate through the list until the length of the candidate list is > 1
-        // for each candidate value, recursively search after assigning the value
-        // make sure that this is still valid
-        HashSet<Integer> otherCand =s.copyCandidates();
+    private boolean search(HashSet<Integer> cands) {
         Collections.sort(squares);
-        if (otherCand.size() == 0) {
+        if (cands.size() == 0) {
             return false;
         }
         boolean solved = true;
         for (Square sq : squares) {
-            if(s.getCandidates().size() != 1) {
+            if(cands.size() != 1) {
                 solved = false;
             }
         }
@@ -95,10 +87,20 @@ public class SudokuAlgorithm{
         }
         Iterator<Square> iter = squares.iterator();
         int size = 1;
+        Square sq = null;
         while(iter.hasNext() && size == 1) {
-            Square sq = iter.next();
+            sq = iter.next();
             size = sq.getCandidates().size();
         }
+        HashSet<Integer> sqCands = sq.getCandidates();
+        Iterator<Integer> setIter = sqCands.iterator();
+        boolean temp = false;
+        while(setIter.hasNext() && !temp) {
+            int d = setIter.next();
+            assignValue(sq, d);
+            temp = search(sq.copyCandidates());
+        }
+        return true;
     }
 
     private boolean eliminateValue(Square s, int d){
