@@ -89,40 +89,34 @@ public class SudokuAlgorithm{
         //     return false;
         // }
         boolean solved = true;
-        Square sqr = null;
-        int count = 0;
         for (Square sq : squares) {
+            if(sq.getCandidates().size() != 1) {
+                solved = false;
+            }
             if(sq.getCandidates().size() == 0){
                 return false;
             }
-            if(sq.getCandidates().size() != 1) {
-                solved = false;
-                sqr = sq;
-                break;
-            }
-            count ++;
         }
-        System.out.println("count: "+count);
         if (solved) {
-            System.out.println("solved");
             return solved;
         }
-        // while(iter.hasNext() && size == 1) {
-        //     sq = iter.next();
-        //     size = sq.getCandidates().size();
-        // }
-        HashSet<Integer> sqCands = sqr.copyCandidates();
+        Iterator<Square> iter = squares.iterator();
+        int size = 1;
+        Square sq = null;
+        while(iter.hasNext() && size == 1) {
+            sq = iter.next();
+            size = sq.getCandidates().size();
+        }
+        HashSet<Integer> sqCands = sq.copyCandidates();
         Iterator<Integer> setIter = sqCands.iterator();
         boolean temp = false;
         while(setIter.hasNext() && !temp) {
             int d = setIter.next();
-            if(!assignValue(sqr, d)){
+            if(!assignValue(sq, d)){
                 return false;
             }
             temp = search();
-            System.out.println(temp);
-            sqr.setCandidates(sqCands);
-            System.out.println("running ....");
+            sq.setCandidates(sqCands);
         }
         return temp;
     }
