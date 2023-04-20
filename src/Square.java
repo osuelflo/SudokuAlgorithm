@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 public class Square implements Comparable<Square>{
     private HashSet<Integer> candidates;
+    private HashSet<Integer> oldCandidates;
     private Integer row;
     private Integer col;
     private Integer box;
@@ -16,6 +17,7 @@ public class Square implements Comparable<Square>{
         col = c;
         box = b;
         candidates = new HashSet<>();
+        oldCandidates = new HashSet<>();
         for(int i = 1; i <10; i++){
             candidates.add(i);
         }
@@ -24,6 +26,14 @@ public class Square implements Comparable<Square>{
 
     public void addPeer(Square s){
         peers.add(s);
+    }
+
+    public void setOldCandidates(HashSet<Integer> cands){
+        oldCandidates = cands;
+    }
+
+    public HashSet<Integer> getOldCandidates(){
+        return oldCandidates;
     }
 
     public HashSet<Integer> getCandidates(){
@@ -79,5 +89,11 @@ public class Square implements Comparable<Square>{
             cands.add(s);
         }
         return cands;
+    }
+
+
+    public static void main(String[] args) {
+        Square s = new Square(1,2,1);
+        System.out.println(s.getCandidates().equals(s.copyCandidates()));
     }
 }
