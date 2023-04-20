@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.List;
 import java.lang.StringBuilder;
+import java.util.Scanner;
+import java.time.*;
 
 public class Sudoku{
     private static final String ROWS_STRING = "123456789";
@@ -252,7 +254,7 @@ public class Sudoku{
             for(int c = 0; c < 9; c ++){
                 s = SQUARES[r][c];
                 String d = gridString[c + 9*r];
-                if(!d.equals("0")){
+                if(DIGITS.contains(d)){
                     assignValue(candidates, s, d);
                 }
             }
@@ -337,6 +339,33 @@ public class Sudoku{
         return null;
     }
 
+    private String solve(String grid){
+        return display(search(parseGrid(grid)));
+    }
+
+    private HashMap<Integer, String> parseFile(String fname){
+        Scanner scan = new Scanner(fname);
+        HashMap<Integer, String> puzzles =  new HashMap<>();
+        int count = 1;
+        while(scan.hasNextLine()){
+            puzzles.put(count, scan.nextLine());
+            count ++;
+        }
+        return puzzles;
+    }
+
+    private String parsePuzzles(HashMap<Integer, String> puzzles){
+        StringBuilder sb = new StringBuilder();
+        for(int n = 1; n <= puzzles.size(); n ++){
+            String grid = puzzles.get(n);
+            Instant start = Instant.now();
+            search(parseGrid(grid));
+            Instant end = Instant.now();
+            Duration timeElapsed = Duration.between(start, end);
+            sb.append("Time taken: "+ timeElapsed.toSeconds() +" seconds" + '\n');
+        }
+        return sb.toString();
+    }
     public static void main(String[] args) {
         Sudoku su = new Sudoku();
         // HashMap<String, HashSet<String>> c = su.initializeCandidates();
@@ -345,7 +374,8 @@ public class Sudoku{
         // System.out.println(cc.get("11") + " cc");
         // System.out.println(c.get("11").equals(cc.get("11")));
         //System.out.println(su.display(su.search(su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300"))));
-        System.out.println(su.display(su.search(su.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000"))));
-        //System.out.println(su.display(su.search(su.parseGrid("000005080000601043000000000010500000000106000300000005530000061000000004000000000"))));
+        //System.out.println(su.display(su.search(su.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000"))));
+        System.out.println(su.solve("200507406000031000000000230000020000860310000045000000009000700006950002001006008"));
+        System.out.println(su.parsePuzzles(su.parseFile(fname)));
     }
 }
