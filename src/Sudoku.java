@@ -10,6 +10,7 @@ import java.io.File;
 import java.lang.StringBuilder;
 import java.util.Scanner;
 import java.time.*;
+import java.util.Random;
 
 public class Sudoku{
     private static final String ROWS_STRING = "123456789";
@@ -374,6 +375,66 @@ public class Sudoku{
         }
         return sb.toString();
     }
+    
+    private String createRandomPuzzle(int givenDigits){
+        HashMap<String, HashSet<String>> candidates = initializeCandidates();
+        ArrayList<String> shuffledSquares = shuffleSquares();
+        for(String s : shuffledSquares){
+            if(candidates.get(s).size() != 1){
+                String d = getRandomDigit(candidates, s);
+                if(assignValue(candidates, s, d) == null){
+                    break;
+                }
+                ArrayList<String> goodSquares = new ArrayList<>();
+                HashSet<String> uniqueDigits = new HashSet<>();
+                for(int r = 0; r < 9; r ++){
+                    for(int c = 0; c < 9; c ++){
+                        HashSet<String> curCands = candidates.get(SQUARES[r][c]);
+                        if(curCands.size() == 1){
+                            Iterator<String> iter = curCands.iterator();
+                            goodSquares.add(SQUARES[r][c]);
+                            uniqueDigits.add(iter.next());
+                        }
+                    }
+                }
+                if(goodSquares.size() >= givenDigits && uniqueDigits.size() >= 8){
+                    StringBuilder sb = new StringBuilder();
+                    for(int r = 0; r < 9; r ++){
+                        for(int c = 0; c < 9; c ++){
+                            HashSet<String> curCands = candidates.get(SQUARES[r][c]);
+                            if(curCands.size() == 1){
+                                Iterator<String> iter = curCands.iterator();
+                                sb.append(iter.next());
+                            }
+                            else{
+                                sb.append(".");
+                            }
+                        }
+                    }
+                    return sb.toString();
+                }
+            }
+        }
+        return createRandomPuzzle(givenDigits);
+    }   
+
+    private ArrayList<String> shuffleSquares(){
+        ArrayList<String> shuffledSquares = new ArrayList<>();
+        for(int i = 0; i < 9; i ++){
+            for(int j = 0; j < 9; j ++){
+                shuffledSquares.add(SQUARES[i][j]);
+            }
+        }
+        Collections.shuffle(shuffledSquares);
+        return shuffledSquares;
+    }
+
+    private String getRandomDigit(HashMap<String, HashSet<String>> candidates, String s){
+        HashSet<String> cands = candidates.get(s);
+        String[] temp = cands.toArray(new String[cands.size()]);
+        Random rand = new Random();
+        return temp[rand.nextInt(cands.size()-1)];
+    }
     public static void main(String[] args) {
         Sudoku su = new Sudoku();
         // HashMap<String, HashSet<String>> c = su.initializeCandidates();
@@ -385,6 +446,7 @@ public class Sudoku{
         //System.out.println(su.display(su.search(su.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000"))));
         //System.out.println(su.solve("200507406000031000000000230000020000860310000045000000009000700006950002001006008"));
         File f = new File("/Users/owensuelflow/Documents/Comp128/SudokuAlgorithm/src/HardPuzzles.txt");
-        System.out.println(su.parsePuzzles(su.parseFile(f)));
+        //System.out.println(su.parsePuzzles(su.parseFile(f)));
+        System.out.println(su.createRandomPuzzle(20));
     }
 }
