@@ -445,8 +445,27 @@ public class Sudoku{
         //System.out.println(su.display(su.search(su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300"))));
         //System.out.println(su.display(su.search(su.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000"))));
         //System.out.println(su.solve("200507406000031000000000230000020000860310000045000000009000700006950002001006008"));
-        File f = new File("/Users/owensuelflow/Documents/Comp128/SudokuAlgorithm/src/HardPuzzles.txt");
+        //File f = new File("/Users/owensuelflow/Documents/Comp128/SudokuAlgorithm/src/HardPuzzles.txt");
         //System.out.println(su.parsePuzzles(su.parseFile(f)));
-        System.out.println(su.createRandomPuzzle(20));
+        //System.out.println(su.createRandomPuzzle(20));
+        long max = 0;
+        long avg = 0;
+        String maxPuzzle = "";
+        for(int i = 0; i < 100000; i ++){
+            String puzzle = su.createRandomPuzzle(17);
+            Instant start = Instant.now();
+            su.search(su.parseGrid(puzzle));
+            Instant end = Instant.now();
+            Duration timeElapsed = Duration.between(start, end);
+            if(max <= timeElapsed.toNanos()){
+                max = timeElapsed.toNanos();
+                maxPuzzle = puzzle;
+            }
+            avg += timeElapsed.toNanos();
+        }
+        avg = avg / 100000;
+        System.out.println("Average solve time (nanoseconds): " + avg);
+        System.out.println("Max solve time (nanoseconds): " + max);
+        System.out.println("Hardest puzzle: " + maxPuzzle);
     }
 }
