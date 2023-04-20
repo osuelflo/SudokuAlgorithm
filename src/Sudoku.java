@@ -11,11 +11,26 @@ import java.lang.StringBuilder;
 public class Sudoku{
     private static final String ROWS_STRING = "123456789";
     private static final String COLS_STRING = "123456789";
+    private static final HashSet<String> DIGITS = makeDigits();
     private static final String[][] SQUARES = createSquares();
     private static final HashMap<Integer, HashSet<String>> BOXES = createBoxes();
     private static final HashMap<Integer, HashSet<String>> ROWS = createRows();
     private static final HashMap<Integer, HashSet<String>> COLS = createCols();
     private static final HashMap<String, HashSet<String>> PEERS = createPeers();
+
+    private static HashSet<String> makeDigits(){
+        HashSet<String> d = new HashSet<>();
+        d.add("1");
+        d.add("2");
+        d.add("3");
+        d.add("4");
+        d.add("5");
+        d.add("6");
+        d.add("7");
+        d.add("8");
+        d.add("9");
+        return d;
+    }
 
     private static String[][] createSquares(){
         int R = -1;
@@ -170,12 +185,22 @@ public class Sudoku{
         return cands;
     }
 
+    private HashMap<String, HashSet<String>> copyCandMap(HashMap<String, HashSet<String>> candidates){
+        HashMap<String, HashSet<String>> map = new HashMap<>();
+        for(int r = 0; r < 9; r ++){
+            for(int c = 0; c < 9; c ++){
+                map.put(SQUARES[r][c], copyCandidates(candidates, SQUARES[r][c]));
+            }
+        }
+        return map;
+    }
+
     private HashMap<String, HashSet<String>> assignValue(HashMap<String, HashSet<String>> candidates, String s, String d){
         HashSet<String> otherCands = copyCandidates(candidates, s);
         otherCands.remove(d);
-        System.out.println("d: " + d);
-        System.out.println("o: " + otherCands);
-        System.out.println("c: " + candidates.get(s));
+        // System.out.println("d: " + d);
+        // System.out.println("o: " + otherCands);
+        // System.out.println("c: " + candidates.get(s));
         for(String digit : otherCands){
             if(eliminateValue(candidates, s, digit) == null){
                 return null;
@@ -276,11 +301,51 @@ public class Sudoku{
         return true;
     }
 
+    private HashMap<String, HashSet<String>> search(HashMap<String, HashSet<String>> candidates){
+        boolean solved = true;
+        String s = "";
+        int size = 100;
+        int curSize = 0;
+        for(int r = 0; r < 9; r ++){
+            for(int c = 0; c < 9; c ++){
+                curSize = candidates.get(SQUARES[r][c]).size();
+                if(curSize != 1){
+                    solved = false;
+                }
+                if(curSize == 0){
+                    return null;
+                }
+                if(curSize != 1 && curSize < size){
+                    s = SQUARES[r][c];
+                    size = curSize;
+                }
+            }
+        }
+        if(solved){
+            return candidates;
+        }
+        HashSet<String> currCands = candidates.get(s);
+        for(String d : currCands){
+            HashMap<String, HashSet<String>> nextCands = assignValue(copyCandMap(candidates), s, d);
+            if(nextCands != null){
+                HashMap<String, HashSet<String>> result = search(nextCands);
+                if(result != null){
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         Sudoku su = new Sudoku();
-        //System.out.println(PEERS.get("11"));
-        //System.out.println(su.display(su.initializeCandidates()));
-        System.out.println(su.display(su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300")));
-        //System.out.println(BOXES.get(1));
+        // HashMap<String, HashSet<String>> c = su.initializeCandidates();
+        // HashMap<String, HashSet<String>> cc = su.copyCandMap(c);
+        // System.out.println(c.get("11") + " c");
+        // System.out.println(cc.get("11") + " cc");
+        // System.out.println(c.get("11").equals(cc.get("11")));
+        //System.out.println(su.display(su.search(su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300"))));
+        System.out.println(su.display(su.search(su.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000"))));
+        //System.out.println(su.display(su.search(su.parseGrid("000005080000601043000000000010500000000106000300000005530000061000000004000000000"))));
     }
 }
