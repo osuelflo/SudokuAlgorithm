@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.List;
+import java.io.File;
 import java.lang.StringBuilder;
 import java.util.Scanner;
 import java.time.*;
@@ -343,13 +344,20 @@ public class Sudoku{
         return display(search(parseGrid(grid)));
     }
 
-    private HashMap<Integer, String> parseFile(String fname){
-        Scanner scan = new Scanner(fname);
+    private HashMap<Integer, String> parseFile(File fname){
         HashMap<Integer, String> puzzles =  new HashMap<>();
-        int count = 1;
-        while(scan.hasNextLine()){
-            puzzles.put(count, scan.nextLine());
-            count ++;
+        try{
+            Scanner scan = new Scanner(fname);
+            int count = 1;
+            while(scan.hasNextLine()){
+                String newLine = scan.nextLine();
+                puzzles.put(count, newLine);
+                System.out.println(newLine.length());
+                System.out.println(newLine);
+                count ++;
+            }
+        } catch(Exception e){
+            System.out.println("file don't exist yo");
         }
         return puzzles;
     }
@@ -359,10 +367,10 @@ public class Sudoku{
         for(int n = 1; n <= puzzles.size(); n ++){
             String grid = puzzles.get(n);
             Instant start = Instant.now();
-            search(parseGrid(grid));
+            sb.append(display(search(parseGrid(grid))));
             Instant end = Instant.now();
             Duration timeElapsed = Duration.between(start, end);
-            sb.append("Time taken: "+ timeElapsed.toSeconds() +" seconds" + '\n');
+            sb.append("Time taken: "+ timeElapsed.toMillis() +" milliseconds" + '\n');
         }
         return sb.toString();
     }
@@ -375,7 +383,8 @@ public class Sudoku{
         // System.out.println(c.get("11").equals(cc.get("11")));
         //System.out.println(su.display(su.search(su.parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300"))));
         //System.out.println(su.display(su.search(su.parseGrid("400000805030000000000700000020000060000080400000010000000603070500200000104000000"))));
-        System.out.println(su.solve("200507406000031000000000230000020000860310000045000000009000700006950002001006008"));
-        System.out.println(su.parsePuzzles(su.parseFile(fname)));
+        //System.out.println(su.solve("200507406000031000000000230000020000860310000045000000009000700006950002001006008"));
+        File f = new File("/Users/owensuelflow/Documents/Comp128/SudokuAlgorithm/src/HardPuzzles.txt");
+        System.out.println(su.parsePuzzles(su.parseFile(f)));
     }
 }
