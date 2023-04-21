@@ -243,6 +243,16 @@ public class Sudoku{
         else if(!constraintTwo(s, d, calcBox(getRow(s), getCol(s)), candidates, BOXES)){
             return null;
         }
+        // else if(!constraintThree(s, d, calcBox(getRow(s), getCol(s)), candidates, BOXES)){
+        //     return null;
+        // }
+        // else if(!constraintThree(s, d, calcBox(getRow(s), getCol(s)), candidates, ROWS)){
+        //     return null;
+        // }
+        // else if(!constraintThree(s, d, calcBox(getRow(s), getCol(s)), candidates, COLS)){
+        //     return null;
+        // }
+        
         else{
             return candidates;
         }
@@ -300,6 +310,55 @@ public class Sudoku{
         else if(temp.size() == 1){
             if(assignValue(candidates, temp.get(0), d) == null){
                 return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean constraintThree(String s, String d, int u, HashMap<String, HashSet<String>> candidates, HashMap<Integer, HashSet<String>> unit){
+        ArrayList<String> temp = new ArrayList<>();
+        Iterator<String> iter = DIGITS.iterator();
+        while(iter.hasNext()){
+            String d2 = iter.next();
+            if(d != d2){
+                for(String sq : unit.get(u)){
+                    HashSet<String> cands = candidates.get(sq);
+                    if(cands.contains(d) && cands.contains(d2)){
+                        temp.add(sq);
+                    }
+                }
+                if(temp.size() == 2){
+                    for(String sqr : unit.get(u)){
+                        if(sqr != temp.get(0) && sqr != temp.get(1)){
+                            if(eliminateValue(candidates, sqr, d) == null){
+                                return false;
+                            }
+                            if(eliminateValue(candidates, sqr, d2) == null){
+                                return false;
+                            }
+                        }
+                    }
+                    HashSet<String> candsOne = candidates.get(temp.get(0));
+                    HashSet<String> candsTwo = candidates.get(temp.get(1));
+                    Iterator<String> iterOne = candsOne.iterator();
+                    Iterator<String> iterTwo = candsTwo.iterator();
+                    while(iterOne.hasNext()){
+                        String curDig = iterOne.next();
+                        if(curDig != d && curDig != d2){
+                            if(eliminateValue(candidates, temp.get(0), curDig) == null){
+                                return false;
+                            }
+                        }
+                    }
+                    while(iterTwo.hasNext()){
+                        String curDig2 = iterTwo.next();
+                        if(curDig2 != d && curDig2 != d2){
+                            if(eliminateValue(candidates, temp.get(1), curDig2) == null){
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
         }
         return true;
@@ -448,24 +507,25 @@ public class Sudoku{
         //File f = new File("/Users/owensuelflow/Documents/Comp128/SudokuAlgorithm/src/HardPuzzles.txt");
         //System.out.println(su.parsePuzzles(su.parseFile(f)));
         //System.out.println(su.createRandomPuzzle(20));
-        long max = 0;
-        long avg = 0;
-        String maxPuzzle = "";
-        for(int i = 0; i < 100000; i ++){
-            String puzzle = su.createRandomPuzzle(17);
-            Instant start = Instant.now();
-            su.search(su.parseGrid(puzzle));
-            Instant end = Instant.now();
-            Duration timeElapsed = Duration.between(start, end);
-            if(max <= timeElapsed.toNanos()){
-                max = timeElapsed.toNanos();
-                maxPuzzle = puzzle;
-            }
-            avg += timeElapsed.toNanos();
-        }
-        avg = avg / 100000;
-        System.out.println("Average solve time (nanoseconds): " + avg);
-        System.out.println("Max solve time (nanoseconds): " + max);
-        System.out.println("Hardest puzzle: " + maxPuzzle);
+        
+        // long max = 0;
+        // long avg = 0;
+        // String maxPuzzle = "";
+        // for(int i = 0; i < 1000000; i ++){
+        //     String puzzle = su.createRandomPuzzle(17);
+        //     Instant start = Instant.now();
+        //     su.search(su.parseGrid(puzzle));
+        //     Instant end = Instant.now();
+        //     Duration timeElapsed = Duration.between(start, end);
+        //     if(max <= timeElapsed.toNanos()){
+        //         max = timeElapsed.toNanos();
+        //         maxPuzzle = puzzle;
+        //     }
+        //     avg += timeElapsed.toNanos();
+        // }
+        // avg = avg / 100000;
+        // System.out.println("Average solve time (nanoseconds): " + avg);
+        // System.out.println("Max solve time (nanoseconds): " + max);
+        // System.out.println("Hardest puzzle: " + maxPuzzle);
     }
 }
