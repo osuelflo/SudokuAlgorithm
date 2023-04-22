@@ -1,3 +1,4 @@
+
 import edu.macalester.graphics.*;
 import edu.macalester.graphics.events.Key;
 
@@ -12,7 +13,7 @@ public class SudokuUI {
     private Sudoku su;
     private CanvasWindow canvas;
     String puzzle;
-    String solution;
+    HashMap<String, HashSet<String>> solution;
     ArrayList<Cell> cells;
     HashMap<String, HashSet<String>> squareValues;
     private int accessIndex = -1;
@@ -21,13 +22,14 @@ public class SudokuUI {
     public SudokuUI() {
         su = new Sudoku();
         canvas = new CanvasWindow("Sudoku", 455, 455);
-        puzzle = su.createRandomPuzzle(30);
-        solution = su.solve(puzzle);
+        puzzle = su.createRandomPuzzle(70);
         squareValues = su.parseGrid(puzzle);
+        solution = su.search(squareValues);
         cells = new ArrayList<>();
         scan = new Scanner(System.in);
         setUpCells();
         setUpGrid();
+        setUpBoldLines();
         canvas.onKeyDown(event -> {
             if (event.getKey() == Key.LEFT_ARROW) {  
                 highlight("LEFT"); 
@@ -42,37 +44,86 @@ public class SudokuUI {
                 highlight("DOWN");
             }
             if (event.getKey() == Key.NUM_1) {
-                setCellValue(1);
+                setCellValue("1");
+                if(!checkSolution("1")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_2) {
-                setCellValue(2);
+                setCellValue("2");
+                if(!checkSolution("2")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_3) {
-                setCellValue(3);
+                setCellValue("3");
+                if(!checkSolution("3")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_4) {
-                setCellValue(4);
+                setCellValue("4");
+                if(!checkSolution("4")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_5) {
-                setCellValue(5);
+                setCellValue("5");
+                if(!checkSolution("5")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_6) {
-                setCellValue(6);
+                setCellValue("6");
+                if(!checkSolution("6")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_7) {
-                setCellValue(7);
+                setCellValue("7");
+                if(!checkSolution("7")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_8) {
-                setCellValue(8);
+                setCellValue("8");
+                if(!checkSolution("8")){
+                    displayIncorrect();
+                }
             }
             if (event.getKey() == Key.NUM_9) {
-                setCellValue(9);
+                setCellValue("9");
+                if(!checkSolution("9")){
+                    displayIncorrect();
+                }
             }
         });
     }
 
     public static void main(String[] args) {
         new SudokuUI();
+    }
+
+    private boolean checkSolution(String value){
+        if (accessIndex != -1) {
+            Cell currentCell = cells.get(accessIndex);
+            HashSet<String> correctDigit = solution.get(currentCell.getCellTag());
+            Iterator<String> iter = correctDigit.iterator();
+            String d = iter.next();
+            System.out.println("d: "+d);
+            System.out.println("value: "+value);
+            if(d.equals(value)){
+                System.out.println("yay");
+                currentCell.getCellShape().setStrokeColor(Color.BLACK);
+                currentCell.getCellShape().setStrokeWidth(1);
+                return true;
+            }
+            else{
+                System.out.println("nope");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void setUpGrid() {
@@ -109,18 +160,40 @@ public class SudokuUI {
         }
     }
 
-    private void setCellValue(int value) {
+    private void setCellValue(String value) {
         if (accessIndex != -1) {
             Cell currentCell = cells.get(accessIndex);
             if (squareValues.get(currentCell.getCellTag()).size() > 1) {
-                currentCell.setDisplay(Integer.toString(value));
+                currentCell.setDisplay(value);
             }
+        }
+    }
+
+    private void displayIncorrect(){
+        if(accessIndex != -1){
+            Cell currentCell = cells.get(accessIndex);
+            currentCell.getCellShape().setStrokeColor(Color.RED);
+            // currentCell.setDisplay("");
+        }
+    }
+
+    private void resetFill(){
+        Cell currentCell = cells.get(accessIndex);
+        currentCell.getCellShape().setFilled(false);
+    }
+    
+    private void pause(){
+        try{
+            Thread.sleep(2000);
+        } catch(Exception e){
+            System.out.println("shit");
         }
     }
 
     private void highlight(String direc) {
         if (accessIndex != -1) {
             cells.get(accessIndex).getCellShape().setStrokeColor(Color.BLACK);
+            cells.get(accessIndex).getCellShape().setStrokeWidth(1);
         }
         else {
             if (direc.equals("LEFT") || direc.equals("UP")) {
@@ -148,6 +221,34 @@ public class SudokuUI {
         if (direc.equals("DOWN")) {
             accessIndex = (accessIndex + 9) % 81;
         }
-        cells.get(accessIndex).getCellShape().setStrokeColor(Color.RED);
+        cells.get(accessIndex).getCellShape().setStrokeColor(Color.BLUE);
+        cells.get(accessIndex).getCellShape().setStrokeWidth(5);
+    }
+
+    private void setUpBoldLines(){
+        double x1 = 25;
+        double y1 = 25;
+        double x2 = 430;
+        double y2 = 25;
+        for(int i = 1; i < 5; i ++){
+            Line l = new Line(x1, y1, x2, y2);
+            l.setStrokeWidth(5);
+            l.setStrokeColor(Color.BLUE);
+            canvas.add(l);
+            y1 += 135;
+            y2 += 135;
+        }
+        x1 = 25;
+        y1 = 25;
+        y2 = 430;
+        x2 = 25;
+        for(int i = 1; i < 5; i ++){
+            Line l = new Line(x1, y1, x2, y2);
+            l.setStrokeWidth(5);
+            l.setStrokeColor(Color.BLUE);
+            canvas.add(l);
+            x1 += 135;
+            x2 += 135;
+        }
     }
 }

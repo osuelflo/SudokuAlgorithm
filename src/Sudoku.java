@@ -408,6 +408,19 @@ public class Sudoku{
         return display(search(parseGrid(grid)));
     }
 
+    public String solveAsLine(String grid){
+        HashMap<String, HashSet<String>> cands = search(parseGrid(grid));
+        StringBuilder sb = new StringBuilder();
+        for(int r = 0; r < 9; r ++){
+            for(int c = 0; c <9; c ++){
+                HashSet<String> curCands = cands.get(SQUARES[r][c]);
+                Iterator<String> iter = curCands.iterator();
+                sb.append(iter.next());
+            }
+        }
+        return sb.toString();
+    }
+
     private HashMap<Integer, String> parseFile(File fname){
         HashMap<Integer, String> puzzles =  new HashMap<>();
         try{
