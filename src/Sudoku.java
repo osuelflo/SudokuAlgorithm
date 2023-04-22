@@ -421,7 +421,7 @@ public class Sudoku{
         return sb.toString();
     }
 
-    private HashMap<Integer, String> parseFile(File fname){
+    public HashMap<Integer, String> parseFile(File fname){
         HashMap<Integer, String> puzzles =  new HashMap<>();
         try{
             Scanner scan = new Scanner(fname);
@@ -429,8 +429,8 @@ public class Sudoku{
             while(scan.hasNextLine()){
                 String newLine = scan.nextLine();
                 puzzles.put(count, newLine);
-                System.out.println(newLine.length());
-                System.out.println(newLine);
+                // System.out.println(newLine.length());
+                // System.out.println(newLine);
                 count ++;
             }
         } catch(Exception e){

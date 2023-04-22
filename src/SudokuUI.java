@@ -5,8 +5,10 @@ import edu.macalester.graphics.events.Key;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 
 public class SudokuUI {
@@ -22,7 +24,7 @@ public class SudokuUI {
     public SudokuUI() {
         su = new Sudoku();
         canvas = new CanvasWindow("Sudoku", 455, 455);
-        puzzle = su.createRandomPuzzle(70);
+        puzzle = getPuzzleFromFile(new File("/Users/owensuelflow/Documents/Comp128/SudokuAlgorithm/src/HardPuzzles.txt"));
         squareValues = su.parseGrid(puzzle);
         solution = su.search(squareValues);
         cells = new ArrayList<>();
@@ -102,6 +104,13 @@ public class SudokuUI {
 
     public static void main(String[] args) {
         new SudokuUI();
+    }
+
+    private String getPuzzleFromFile(File fname){
+        HashMap<Integer, String> puzzles = su.parseFile(fname);
+        Random rand = new Random();
+        int ind = rand.nextInt(1, puzzles.size());
+        return puzzles.get(ind);
     }
 
     private boolean checkSolution(String value){
