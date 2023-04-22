@@ -22,6 +22,10 @@ public class Sudoku{
     private static final HashMap<Integer, HashSet<String>> COLS = createCols();
     private static final HashMap<String, HashSet<String>> PEERS = createPeers();
 
+    public String[][] getSquareTags() {
+        return SQUARES;
+    }
+
     private static HashSet<String> makeDigits(){
         HashSet<String> d = new HashSet<>();
         d.add("1");
@@ -258,7 +262,7 @@ public class Sudoku{
         }
     }
 
-    private HashMap<String, HashSet<String>> parseGrid(String grid){
+    public HashMap<String, HashSet<String>> parseGrid(String grid){
         HashMap<String, HashSet<String>> candidates = initializeCandidates();
         String[] gridString = grid.split("");
         String s = "";
@@ -364,7 +368,7 @@ public class Sudoku{
         return true;
     }
 
-    private HashMap<String, HashSet<String>> search(HashMap<String, HashSet<String>> candidates){
+    public HashMap<String, HashSet<String>> search(HashMap<String, HashSet<String>> candidates){
         boolean solved = true;
         String s = "";
         int size = 100;
@@ -400,7 +404,7 @@ public class Sudoku{
         return null;
     }
 
-    private String solve(String grid){
+    public String solve(String grid){
         return display(search(parseGrid(grid)));
     }
 
@@ -435,7 +439,7 @@ public class Sudoku{
         return sb.toString();
     }
     
-    private String createRandomPuzzle(int givenDigits){
+    public String createRandomPuzzle(int givenDigits){
         HashMap<String, HashSet<String>> candidates = initializeCandidates();
         ArrayList<String> shuffledSquares = shuffleSquares();
         for(String s : shuffledSquares){
