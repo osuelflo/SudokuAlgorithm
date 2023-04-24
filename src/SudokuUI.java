@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 
-import javax.swing.plaf.synth.SynthIcon;
-
 public class SudokuUI {
     private Sudoku su;
     private CanvasWindow canvas;
@@ -26,7 +24,7 @@ public class SudokuUI {
 
     public SudokuUI() {
         su = new Sudoku();
-        canvas = new CanvasWindow("Sudoku", 455*2, 500 * 2);
+        canvas = new CanvasWindow("Sudoku", 819, 900);
         puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
         squareValues = su.parseGrid(puzzle);
         solution = su.search(squareValues);
@@ -103,7 +101,7 @@ public class SudokuUI {
                     displayIncorrect();
                 }
             }
-            if (event.getKey() == Key.SHIFT) {
+            if (event.getKey() == Key.SPACE) {
                 if (gameState == GameState.PENCIL_IN) {
                     gameState = GameState.WRITE_IN;
                 }
@@ -126,7 +124,7 @@ public class SudokuUI {
     }
 
     private boolean checkSolution(String value){
-        if (accessIndex != -1) {
+        if (accessIndex != -1 && gameState == GameState.WRITE_IN) {
             Cell currentCell = cells.get(accessIndex);
             HashSet<String> correctDigit = solution.get(currentCell.getCellTag());
             Iterator<String> iter = correctDigit.iterator();
@@ -168,18 +166,18 @@ public class SudokuUI {
     }
 
     private void setUpCells() {
-        double columnCount = 50;
-        double rowCount = 50;
+        double columnCount = 45;
+        double rowCount = 45;
         for (int i=0; i < 81; i++) {
-            if(columnCount > 810) {
-                rowCount += 90;
-                columnCount = 50;
+            if(columnCount > 729) {
+                rowCount += 81;
+                columnCount = 45;
             }
-            Rectangle cellShape = new Rectangle(columnCount, rowCount, 90, 90);
+            Rectangle cellShape = new Rectangle(columnCount, rowCount, 81, 81);
             Cell cell = new Cell("", cellShape, canvas);
             canvas.add(cell.getCellShape());
             cells.add(cell);
-            columnCount += 90;
+            columnCount += 81;
         }
     }
 
@@ -196,7 +194,7 @@ public class SudokuUI {
             if (accessIndex != 1) {
                 Cell currentCell = cells.get(accessIndex);
                 if (squareValues.get(currentCell.getCellTag()).size() > 1) {
-                    System.out.println("pencil in");
+                    currentCell.pencilInValue(value);
                 }
             }
         }
@@ -261,29 +259,29 @@ public class SudokuUI {
     }
 
     private void setUpBoldLines(){
-        double x1 = 50;
-        double y1 = 50;
-        double x2 = 860;
-        double y2 = 50;
+        double x1 = 45;
+        double y1 = 45;
+        double x2 = 774;
+        double y2 = 45;
         for(int i = 1; i < 5; i ++){
             Line l = new Line(x1, y1, x2, y2);
             l.setStrokeWidth(5);
             l.setStrokeColor(Color.BLUE);
             canvas.add(l);
-            y1 += 270;
-            y2 += 270;
+            y1 += 243;
+            y2 += 243;
         }
-        x1 = 50;
-        y1 = 50;
-        y2 = 860;
-        x2 = 50;
+        x1 = 45;
+        y1 = 45;
+        y2 = 774;
+        x2 = 45;
         for(int i = 1; i < 5; i ++){
             Line l = new Line(x1, y1, x2, y2);
             l.setStrokeWidth(5);
             l.setStrokeColor(Color.BLUE);
             canvas.add(l);
-            x1 += 270;
-            x2 += 270;
+            x1 += 243;
+            x2 += 243;
         }
     }
 }

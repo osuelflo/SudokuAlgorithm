@@ -8,7 +8,7 @@ public class Cell {
     private Rectangle cellShape;
     private GraphicsText display;
     private CanvasWindow canvas;
-    private ArrayList<Integer> pencilInValues;
+    private ArrayList<String> pencilInValues;
     private boolean isFixed;
 
     public Cell(String tag, Rectangle box, CanvasWindow canvas) {
@@ -16,7 +16,7 @@ public class Cell {
         cellTag = tag;
         cellShape = box;
         isFixed = false;
-        display = new GraphicsText("", box.getX() + 40.0, box.getY() + 55.0);
+        display = new GraphicsText("", box.getX() + 35.0, box.getY() + 50.0);
         display.setFont(FontStyle.BOLD, 20);
         this.canvas.add(display);
         pencilInValues = new ArrayList<>();
@@ -36,13 +36,13 @@ public class Cell {
         }
     }
 
-    public void pencilInValue(Integer value) {
+    public void pencilInValue(String value) {
         if (!pencilInValues.contains(value) && !isFixed) {
             pencilInValues.add(value);
         }
     }
 
-    public void pencilOutValue(Integer value) {
+    public void pencilOutValue(String value) {
         if (pencilInValues.contains(value) && !isFixed) {
             pencilInValues.remove(value);
         }
@@ -60,7 +60,7 @@ public class Cell {
         return cellShape;
     }
 
-    public ArrayList<Integer> getPencilInValues() {
+    public ArrayList<String> getPencilInValues() {
         return pencilInValues;
     }
 }
