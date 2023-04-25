@@ -451,6 +451,50 @@ public class Sudoku{
         }
         return sb.toString();
     }
+
+    public String displayPuzzleString(HashMap<String, HashSet<String>> candidates){
+        StringBuilder sb = new StringBuilder();
+        HashSet<String> curCands = new HashSet<>();
+        for(int r = 0; r < 9; r ++){
+            for(int c = 0; c < 9; c ++){
+                curCands = candidates.get(SQUARES[r][c]);
+                Iterator<String> iter = curCands.iterator();
+                sb.append(iter.next());
+            }
+        }
+        return sb.toString();
+    }
+
+    public String addGivenDigits(String puzzle, String solution, int numAdded, HashMap<String, HashSet<String>> candidates){
+        int addedDigit = 0;
+        StringBuilder sb = new StringBuilder();
+        HashSet<Integer> indices = new HashSet<>();
+        Random rand = new Random();
+        System.out.println(puzzle);
+        while(addedDigit < numAdded){
+            int curInd = rand.nextInt(80);
+            if(puzzle.charAt(curInd) == '.' && !indices.contains(curInd)){
+                indices.add(curInd);
+                addedDigit ++;
+                int row = curInd / 9;
+                int col = curInd % 9;
+                HashSet<String> temp = new HashSet<>();
+                StringBuilder s = new StringBuilder();
+                s.append(solution.charAt(curInd));
+                temp.add(s.toString());
+                candidates.put(SQUARES[row][col], temp);
+            }
+        }
+        for(int i = 0; i < 81; i ++){
+            if(indices.contains(i)){
+                sb.append(solution.charAt(i));
+            }
+            else{
+                sb.append(puzzle.charAt(i));
+            }
+        }
+        return sb.toString();
+    }
     
     public String createRandomPuzzle(int givenDigits){
         HashMap<String, HashSet<String>> candidates = initializeCandidates();

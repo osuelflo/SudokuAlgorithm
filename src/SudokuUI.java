@@ -106,6 +106,14 @@ public class SudokuUI {
                     gameState = GameState.PENCIL_IN;
                 }
             }
+            if (event.getKey() == Key.DELETE_OR_BACKSPACE){
+                if (gameState == GameState.PENCIL_IN) {
+                    removePencilMark();
+                }
+                else {
+                    removeWriteIn();
+                }
+            }
         });
         canvas.animate(() -> {
             updateTimer();
@@ -117,15 +125,24 @@ public class SudokuUI {
         SudokuApp.run();
     }
 
+    private void removeWriteIn(){
+        Cell curCell = cells.get(accessIndex);
+        curCell.writeOutValue();
+    }
+
+    private void removePencilMark(){
+        Cell curCell = cells.get(accessIndex);
+        curCell.pencilOutValue();
+    }
+
     private void run() {
         setUpAll();
     }
 
     private void setUpAll() {
         canvas.removeAll();
-        puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
-        squareValues = su.parseGrid(puzzle);
-        solution = su.search(squareValues);
+        //puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
+        setUpPuzzle();
         cells = new ArrayList<>();
         scan = new Scanner(System.in);
         gameState = GameState.WRITE_IN;
@@ -139,6 +156,14 @@ public class SudokuUI {
         restartButton.setPosition(361, 820);
         canvas.add(restartButton);
         restartButton.onClick(() -> setUpAll());
+    }
+
+    private void setUpPuzzle(){
+        String puzzleTemp = su.createRandomPuzzle(10);
+        HashMap<String, HashSet<String>> squareValuesTemp = su.parseGrid(puzzleTemp);
+        HashMap<String, HashSet<String>> solution = su.search(squareValuesTemp);
+        puzzle = su.addGivenDigits(puzzleTemp, su.displayPuzzleString(solution), 15, squareValuesTemp);
+        squareValues = squareValuesTemp;
     }
 
     private void setUpInstructions() {

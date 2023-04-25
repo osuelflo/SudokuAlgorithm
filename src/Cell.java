@@ -50,9 +50,21 @@ public class Cell {
         }
     }
 
-    public void pencilOutValue(String value) {
-        if (pencilInValues.contains(value) && !isFixed) {
-            pencilInValues.remove(value);
+    public void pencilOutValue() {
+        if (pencilInValues.size() > 0 && !isFixed) {
+            pencilInValues.remove(pencilInValues.size()-1);
+            if(pencilInValues.size() == 0){
+                pencilInDisplay.setText("");
+            }
+            else{
+                pencilInDisplay.setText(pencilInValues.toString());
+            }
+        }
+    }
+
+    public void writeOutValue(){
+        if(!isFixed){
+            display.setText("");
         }
     }
 
