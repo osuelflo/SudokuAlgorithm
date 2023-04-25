@@ -1,6 +1,7 @@
 
 import edu.macalester.graphics.*;
 import edu.macalester.graphics.events.Key;
+import edu.macalester.graphics.ui.Button;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class SudokuUI {
     private Sudoku su;
@@ -21,19 +23,14 @@ public class SudokuUI {
     private int accessIndex = -1;
     private Scanner scan;
     private GameState gameState;
+    private GraphicsText timer;
+    private long time;
+    private long startTime;
 
     public SudokuUI() {
         su = new Sudoku();
-        canvas = new CanvasWindow("Sudoku", 819, 900);
-        puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
-        squareValues = su.parseGrid(puzzle);
-        solution = su.search(squareValues);
-        cells = new ArrayList<>();
-        scan = new Scanner(System.in);
-        gameState = GameState.WRITE_IN;
-        setUpCells();
-        setUpGrid();
-        setUpBoldLines();
+        canvas = new CanvasWindow("Sudoku", 1200, 900);
+        timer = new GraphicsText("", 1000, 700);
         canvas.onKeyDown(event -> {
             if (event.getKey() == Key.LEFT_ARROW) {  
                 highlight("LEFT"); 
@@ -110,10 +107,63 @@ public class SudokuUI {
                 }
             }
         });
+        canvas.animate(() -> {
+            updateTimer();
+        });
     }
 
     public static void main(String[] args) {
-        new SudokuUI();
+        SudokuUI SudokuApp = new SudokuUI();
+        SudokuApp.run();
+    }
+
+    private void run() {
+        setUpAll();
+    }
+
+    private void setUpAll() {
+        canvas.removeAll();
+        puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
+        squareValues = su.parseGrid(puzzle);
+        solution = su.search(squareValues);
+        cells = new ArrayList<>();
+        scan = new Scanner(System.in);
+        gameState = GameState.WRITE_IN;
+        setUpInstructions();
+        setUpCells();
+        setUpGrid();
+        setUpBoldLines();
+        setUpTimer();
+        accessIndex = -1;
+        Button restartButton = new Button("New Puzzle");
+        restartButton.setPosition(361, 820);
+        canvas.add(restartButton);
+        restartButton.onClick(() -> setUpAll());
+    }
+
+    private void setUpInstructions() {
+        GraphicsText instructions = new GraphicsText("________How to Play________ \n \n - Cycle through cells with the arrow keys \n \n - To enter a number, hit that number key. A red border indicates a wrong selection, while a blue border indicates a correct selection. Once a value is correctly selected, that cell may no longer accept pencil-in values, nor may it be changed \n \n - To pencil in values, toggle the PENCIL_IN gamemode by pressing <SPACE>. To return to the WRITE_IN gamemode, press <SPACE>.", 855, 65);
+        instructions.setFont(FontStyle.BOLD, 20);
+        instructions.setWrappingWidth(290);
+        Rectangle bg = new Rectangle(850, 45, 300, 729);
+        bg.setFillColor(Color.LIGHT_GRAY);
+        bg.setStrokeWidth(5);
+        canvas.add(bg);
+        canvas.add(instructions);
+    }
+
+    private void setUpTimer() {
+        time = 0;
+        timer.setText(Long.toString(time));
+        timer.setScale(5.0);
+        canvas.add(timer);
+        startTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+        time = startTime;
+    }
+
+    private void updateTimer() {
+        time = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+        timer.setText(Long.toString(time - startTime));
     }
 
     private String getPuzzleFromFile(File fname){
