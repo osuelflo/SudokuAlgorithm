@@ -1,12 +1,12 @@
 import edu.macalester.graphics.*;
 
-import java.util.HashSet;
 import java.util.ArrayList;
 
 public class Cell {
     private String cellTag;
     private Rectangle cellShape;
     private GraphicsText display;
+    private GraphicsText pencilInDisplay;
     private CanvasWindow canvas;
     private ArrayList<String> pencilInValues;
     private boolean isFixed;
@@ -17,12 +17,17 @@ public class Cell {
         cellShape = box;
         isFixed = false;
         display = new GraphicsText("", box.getX() + 35.0, box.getY() + 50.0);
-        display.setFont(FontStyle.BOLD, 20);
+        display.setFont(FontStyle.BOLD, 25);
+        pencilInDisplay = new GraphicsText("", box.getX() + 5, box.getY() + 15);
+        pencilInDisplay.setFont(FontStyle.BOLD, 10);
+        pencilInDisplay.setWrappingWidth(box.getWidth() - 5);
+        canvas.add(pencilInDisplay);
         this.canvas.add(display);
         pencilInValues = new ArrayList<>();
     }
 
     public void setFixed(boolean newFixedValue) {
+        canvas.remove(pencilInDisplay);
         isFixed = newFixedValue;
     }
 
@@ -39,6 +44,9 @@ public class Cell {
     public void pencilInValue(String value) {
         if (!pencilInValues.contains(value) && !isFixed) {
             pencilInValues.add(value);
+            canvas.remove(pencilInDisplay);
+            pencilInDisplay.setText(pencilInValues.toString());
+            canvas.add(pencilInDisplay);
         }
     }
 

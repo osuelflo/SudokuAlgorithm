@@ -131,12 +131,15 @@ public class SudokuUI {
             String d = iter.next();
             System.out.println("d: "+d);
             System.out.println("value: "+value);
-            if(d.equals(value)){
+            if(d.equals(value) && !currentCell.isFixed()){
                 currentCell.setFixed(true);
                 System.out.println("yay");
                 currentCell.getCellShape().setStrokeColor(Color.BLUE);
                 // currentCell.getCellShape().setStrokeWidth(1);
                 return true;
+            }
+            else if (currentCell.isFixed()) {
+                System.out.println("value already set");
             }
             else{
                 System.out.println("nope");
