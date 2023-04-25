@@ -161,7 +161,7 @@ public class SudokuUI {
     private void setUpPuzzle(){
         String puzzleTemp = su.createRandomPuzzle(10);
         HashMap<String, HashSet<String>> squareValuesTemp = su.parseGrid(puzzleTemp);
-        HashMap<String, HashSet<String>> solution = su.search(squareValuesTemp);
+        solution = su.search(squareValuesTemp);
         puzzle = su.addGivenDigits(puzzleTemp, su.displayPuzzleString(solution), 15, squareValuesTemp);
         squareValues = squareValuesTemp;
     }
