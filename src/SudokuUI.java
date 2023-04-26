@@ -283,6 +283,7 @@ public class SudokuUI {
             Cell currentCell = cells.get(accessIndex);
             if (!currentCell.isFixed()) {
                 currentCell.getCellShape().setStrokeColor(Color.RED);
+                time += 5;
             }
             // currentCell.setDisplay("");
         }
