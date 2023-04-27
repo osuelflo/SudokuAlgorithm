@@ -6,12 +6,18 @@ import edu.macalester.graphics.ui.Button;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class SudokuUI {
     private Sudoku su;
@@ -26,11 +32,13 @@ public class SudokuUI {
     private GraphicsText timer;
     private long time;
     private long startTime;
+    private int initNumDigits;
+    private int squaresRemaining;
 
     public SudokuUI() {
         su = new Sudoku();
         canvas = new CanvasWindow("Sudoku", 1200, 900);
-        timer = new GraphicsText("", 1000, 700);
+        timer = new GraphicsText("", 990, 700);
         canvas.onKeyDown(event -> {
             if (event.getKey() == Key.LEFT_ARROW) {  
                 highlight("LEFT"); 
@@ -140,9 +148,11 @@ public class SudokuUI {
     }
 
     private void setUpAll() {
+        initNumDigits = 30;
+        squaresRemaining = 81;
         canvas.removeAll();
         //puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
-        setUpPuzzle();
+        setUpPuzzle(initNumDigits);
         cells = new ArrayList<>();
         scan = new Scanner(System.in);
         gameState = GameState.WRITE_IN;
@@ -158,8 +168,8 @@ public class SudokuUI {
         restartButton.onClick(() -> setUpAll());
     }
 
-    private void setUpPuzzle(){
-        String puzzleTemp = su.createRandomPuzzle(10);
+    private void setUpPuzzle(int initNumDigits){
+        String puzzleTemp = su.createRandomPuzzle(initNumDigits);
         HashMap<String, HashSet<String>> squareValuesTemp = su.parseGrid(puzzleTemp);
         solution = su.search(squareValuesTemp);
         puzzle = su.addGivenDigits(puzzleTemp, su.displayPuzzleString(solution), 15, squareValuesTemp);
@@ -167,14 +177,34 @@ public class SudokuUI {
     }
 
     private void setUpInstructions() {
-        GraphicsText instructions = new GraphicsText("________How to Play________ \n \n - Cycle through cells with the arrow keys \n \n - To enter a number, hit that number key. A red border indicates a wrong selection, while a blue border indicates a correct selection. Once a value is correctly selected, that cell may no longer accept pencil-in values, nor may it be changed \n \n - To pencil in values, toggle the PENCIL_IN gamemode by pressing <SPACE>. To return to the WRITE_IN gamemode, press <SPACE>.", 855, 65);
+        // Learned how to read from a file here https://www.digitalocean.com/community/tutorials/java-read-file-line-by-line 
+        GraphicsText instructions = new GraphicsText("________How to Play________ \n \n - Cycle through cells with the arrow keys \n \n - To enter a number, hit that number key. A red border indicates a wrong selection, while a blue border indicates a correct selection. Once a value is correctly selected, that cell may no longer accept pencil-in values, nor may it be changed \n \n - To pencil in values, toggle the PENCIL_IN gamemode by pressing <SPACE>. To return to the WRITE_IN gamemode, press <SPACE>. \n \n ________Best Time________", 855, 65);
         instructions.setFont(FontStyle.BOLD, 20);
         instructions.setWrappingWidth(290);
         Rectangle bg = new Rectangle(850, 45, 300, 729);
         bg.setFillColor(Color.LIGHT_GRAY);
         bg.setStrokeWidth(5);
+        GraphicsText topScore = new GraphicsText("", 980, 640);
+        topScore.setFont(FontStyle.BOLD, 20);
+        BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader("src/times.txt"));
+			String line = reader.readLine();
+            String maxScore = line;
+			while (line != null) {
+				if (maxScore.compareTo(line) < 0) {
+                    maxScore = line;
+                }
+				line = reader.readLine();
+			}
+            topScore.setText(maxScore);
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         canvas.add(bg);
         canvas.add(instructions);
+        canvas.add(topScore);
     }
 
     private void setUpTimer() {
@@ -198,7 +228,7 @@ public class SudokuUI {
         return puzzles.get(ind);
     }
 
-    private boolean checkSolution(String value){
+    private boolean checkSolution(String value) {
         if (accessIndex != -1 && gameState == GameState.WRITE_IN) {
             Cell currentCell = cells.get(accessIndex);
             HashSet<String> correctDigit = solution.get(currentCell.getCellTag());
@@ -211,6 +241,10 @@ public class SudokuUI {
                 System.out.println("yay");
                 currentCell.getCellShape().setStrokeColor(Color.BLUE);
                 // currentCell.getCellShape().setStrokeWidth(1);
+                squaresRemaining -= 1;
+                if (squaresRemaining == 0) {
+                    winScreen();
+                }
                 return true;
             }
             else if (currentCell.isFixed()) {
@@ -237,6 +271,7 @@ public class SudokuUI {
                     Iterator<String> iter = cands.iterator();
                     currentCell.setDisplay(iter.next());
                     currentCell.setFixed(true);
+                    squaresRemaining -= 1;
                 }
                 index++;
             }
@@ -362,5 +397,30 @@ public class SudokuUI {
             x1 += 243;
             x2 += 243;
         }
+    }
+
+    private void winScreen() {
+        // Learned how to write to a file here: https://www.geeksforgeeks.org/java-program-to-write-into-a-file/
+        Long winTime = time - startTime;
+        try {
+            FileWriter writer = new FileWriter("src/times.txt",true);
+            writer.write(Long.toString(winTime).concat(" \r\n"));
+            writer.close();
+        }
+        catch(IOException e) {
+            System.out.println(e.getMessage());
+        }
+        Rectangle winbg = new Rectangle(230, 230, 363, 200);
+        winbg.setFillColor(Color.WHITE);
+        GraphicsText winGraphics = new GraphicsText("You Win", winbg.getX() + winbg.getWidth() / 2.9, winbg.getY() + 80);
+        GraphicsText winGraphics2 = new GraphicsText("Your Time (in seconds):", winbg.getX() + winbg.getWidth() / 5, winbg.getY() + 120);
+        GraphicsText winTimeText = new GraphicsText(Long.toString(winTime).concat("\n"), winbg.getX() + winbg.getWidth() / 2.1, winbg.getY() + 160);
+        winGraphics.setFont(FontStyle.BOLD,25);
+        winGraphics2.setFont(FontStyle.BOLD,20);
+        winTimeText.setFont(FontStyle.BOLD,20);
+        canvas.add(winbg);
+        canvas.add(winGraphics);
+        canvas.add(winGraphics2);
+        canvas.add(winTimeText);
     }
 }
