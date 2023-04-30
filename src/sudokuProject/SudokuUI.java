@@ -1,24 +1,26 @@
+package sudokuProject;
 
 import edu.macalester.graphics.*;
 import edu.macalester.graphics.events.Key;
 import edu.macalester.graphics.ui.Button;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.Color;
-import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * @author Adam Schroeder, Owen Suelflow
+ * The User Interface employing the Sudoku solver and generator algorithms
+ */
 public class SudokuUI {
     private Sudoku su;
     private CanvasWindow canvas;
@@ -35,6 +37,9 @@ public class SudokuUI {
     private int initNumDigits;
     private int squaresRemaining;
 
+    /**
+     * Creates a new instance of the SudokuUI
+     */
     public SudokuUI() {
         su = new Sudoku();
         canvas = new CanvasWindow("Sudoku", 1200, 900);
@@ -133,20 +138,32 @@ public class SudokuUI {
         SudokuApp.run();
     }
 
+    /**
+     * Removes the current displayed value for the cell currently at the value of accessIndex in the ArrayList of cells
+     */
     private void removeWriteIn(){
         Cell curCell = cells.get(accessIndex);
         curCell.writeOutValue();
     }
 
+    /**
+     * Removes the last penciled-in value for the cell currently at accessIndex
+     */
     private void removePencilMark(){
         Cell curCell = cells.get(accessIndex);
         curCell.pencilOutValue();
     }
 
+    /**
+     * Called by the main method to run the program
+     */
     private void run() {
         setUpAll();
     }
 
+    /**
+     * Sets up the puzzle, the instructions, the cells, the grid, and the timer. Note the number of digits passed to the puzzle generator must be manually edited
+     */
     private void setUpAll() {
         initNumDigits = 30;
         squaresRemaining = 81;
@@ -168,6 +185,10 @@ public class SudokuUI {
         restartButton.onClick(() -> setUpAll());
     }
 
+    /**
+     * Invokes the puzzle generator algorithm using the given number of digits
+     * @param initNumDigits The number of digits used to generate the new puzzle. Note the actual amount may be greater due to the algorithm's constraints
+     */
     private void setUpPuzzle(int initNumDigits){
         String puzzleTemp = su.createRandomPuzzle(initNumDigits);
         HashMap<String, HashSet<String>> squareValuesTemp = su.parseGrid(puzzleTemp);
@@ -176,6 +197,9 @@ public class SudokuUI {
         squareValues = squareValuesTemp;
     }
 
+    /**
+     * Sets up the graphics for the instructions as well as retrives the current top time from the times.txt file
+     */
     private void setUpInstructions() {
         // Learned how to read from a file here https://www.digitalocean.com/community/tutorials/java-read-file-line-by-line 
         GraphicsText instructions = new GraphicsText("________How to Play________ \n \n - Cycle through cells with the arrow keys \n \n - To enter a number, hit that number key. A red border indicates a wrong selection, while a blue border indicates a correct selection. Once a value is correctly selected, that cell may no longer accept pencil-in values, nor may it be changed \n \n - To pencil in values, toggle the PENCIL_IN gamemode by pressing <SPACE>. To return to the WRITE_IN gamemode, press <SPACE>. \n \n ________Best Time________", 855, 65);
@@ -188,7 +212,7 @@ public class SudokuUI {
         topScore.setFont(FontStyle.BOLD, 20);
         BufferedReader reader;
 		try {
-			reader = new BufferedReader(new FileReader("src/times.txt"));
+			reader = new BufferedReader(new FileReader("src/sudokuProject/times.txt"));
 			String line = reader.readLine();
             String maxScore = line;
 			while (line != null) {
@@ -207,6 +231,9 @@ public class SudokuUI {
         canvas.add(topScore);
     }
 
+    /**
+     * Sets up the timer using the System's time in milliseconds, converted to seconds by TimeUnit
+     */
     private void setUpTimer() {
         time = 0;
         timer.setText(Long.toString(time));
@@ -216,11 +243,19 @@ public class SudokuUI {
         time = startTime;
     }
 
+    /**
+     * This method is called continuously by the canvas's animate(). Updates the timer incrementally by one second
+     */
     private void updateTimer() {
         time = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
         timer.setText(Long.toString(time - startTime));
     }
 
+    /**
+     * Retrieves a puzzle from the given file. By default not invoked, but can be invoked by setUpAll()
+     * @param fname
+     * @return
+     */
     private String getPuzzleFromFile(File fname){
         HashMap<Integer, String> puzzles = su.parseFile(fname);
         Random rand = new Random();
@@ -228,6 +263,11 @@ public class SudokuUI {
         return puzzles.get(ind);
     }
 
+    /**
+     * Checks whether or not an input value for a cell is correct. If not, the border is set to Red; otherwise the value becomes fixed
+     * @param value The String value to be checked against the actual answer
+     * @return true if correct, false otherwise
+     */
     private boolean checkSolution(String value) {
         if (accessIndex != -1 && gameState == GameState.WRITE_IN) {
             Cell currentCell = cells.get(accessIndex);
@@ -258,6 +298,9 @@ public class SudokuUI {
         return true;
     }
 
+    /**
+     * Creates the sudoku board as a grid of empty cell objects
+     */
     private void setUpGrid() {
         String[][] squareTags = su.getSquareTags();
         int index = 0;
@@ -278,6 +321,9 @@ public class SudokuUI {
         }
     }
 
+    /**
+     * Assigns to each cell its correpsonding square from the sudoku algorithm and adds each cell in alphanumeric order to the ArrayList of cells
+     */
     private void setUpCells() {
         double columnCount = 45;
         double rowCount = 45;
@@ -294,6 +340,10 @@ public class SudokuUI {
         }
     }
 
+    /**
+     * If the gamemode is WRITE_IN: Sets the displayed value of the cell at accessIndex to the given String value provided the cell is not already fixed
+     * If the gamemode is PENCIL_IN: Adds the given String value to the cell's penciled-in values if not already present, provided the cell is not already fixed
+     */
     private void setCellValue(String value) {
         if (gameState == GameState.WRITE_IN) {
             if (accessIndex != -1) {
@@ -313,6 +363,9 @@ public class SudokuUI {
         }
     }
 
+    /**
+     * If the current cell at accessIndex is not fixed, this method sets the border to Red
+     */
     private void displayIncorrect(){
         if(accessIndex != -1){
             Cell currentCell = cells.get(accessIndex);
@@ -324,19 +377,23 @@ public class SudokuUI {
         }
     }
 
-    private void resetFill(){
-        Cell currentCell = cells.get(accessIndex);
-        currentCell.getCellShape().setFilled(false);
-    }
+    // private void resetFill(){
+    //     Cell currentCell = cells.get(accessIndex);
+    //     currentCell.getCellShape().setFilled(false);
+    // }
     
-    private void pause(){
-        try{
-            Thread.sleep(2000);
-        } catch(Exception e){
-            System.out.println("shit");
-        }
-    }
+    // private void pause(){
+    //     try{
+    //         Thread.sleep(2000);
+    //     } catch(Exception e){
+    //         System.out.println("shit");
+    //     }
+    // }
 
+    /**
+     * Moves the current cell selection by appropriately incrementing accessIndex. Bolds the cell at the resulting accessIndex.
+     * Note: accessIndex begins at -1, so the first cell to be highlighted will be A1
+     */
     private void highlight(String direc) {
         if (accessIndex != -1) {
             cells.get(accessIndex).getCellShape().setStrokeColor(Color.BLACK);
@@ -372,6 +429,9 @@ public class SudokuUI {
         cells.get(accessIndex).getCellShape().setStrokeWidth(5);
     }
 
+    /**
+     * Sets up the overlying 3x3 matrix of submatrices on the sudoku board. This overlying matrix is denoted by bold blue lines
+     */
     private void setUpBoldLines(){
         double x1 = 45;
         double y1 = 45;
@@ -399,11 +459,14 @@ public class SudokuUI {
         }
     }
 
+    /**
+     * If the current solution matches the generated solution, the win screen along with the elapsed time is displayed
+     */
     private void winScreen() {
         // Learned how to write to a file here: https://www.geeksforgeeks.org/java-program-to-write-into-a-file/
         Long winTime = time - startTime;
         try {
-            FileWriter writer = new FileWriter("src/times.txt",true);
+            FileWriter writer = new FileWriter("src/sudokuProject/times.txt",true);
             writer.write(Long.toString(winTime).concat(" \r\n"));
             writer.close();
         }
