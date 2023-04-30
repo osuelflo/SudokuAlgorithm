@@ -557,6 +557,7 @@ public class Sudoku{
         Random rand = new Random();
         return temp[rand.nextInt(cands.size()-1)];
     }
+    
     public static void main(String[] args) {
         Sudoku su = new Sudoku();
         // HashMap<String, HashSet<String>> c = su.initializeCandidates();
