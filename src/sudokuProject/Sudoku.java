@@ -1,3 +1,5 @@
+package sudokuProject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -643,6 +645,7 @@ public class Sudoku{
         Random rand = new Random();
         return temp[rand.nextInt(cands.size()-1)];
     }
+    
     public static void main(String[] args) {
         //Sudoku su = new Sudoku();
 
