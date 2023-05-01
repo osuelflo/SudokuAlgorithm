@@ -4,7 +4,7 @@ Owen Suelflow, Adam Schroeder COMP 128 Project: Sudoku Algorithm and UI
 ## Project Description ##
 Sudoku is a 9 by 9 matrix where each column and each row must contain 1-9 with no duplicates; furthermore each of the 9 submatrices must contain 1-9 with no duplicates in order to be solved.
 
-To run the program with the user interface run the main method in SudokuUI.java. To test just the elements of the algorithm, run the main method in Sudoku.java (add more here).
+To run the program with the user interface run the main method in SudokuUI.java. To test just the elements of the algorithm, run the main method in Sudoku.java with the target methods.
 
 In the UI, if generating a puzzle using the puzzle generator, the number of starting digits has to be specified in the code under setUpAll(). Constraints may result in a greater number of starting digits on the screen.
 
