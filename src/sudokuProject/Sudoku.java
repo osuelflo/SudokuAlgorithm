@@ -40,7 +40,7 @@ public class Sudoku{
 
     /**
      * initialize set of possible digits
-     * @return
+     * @return Set of digits 1-9
     */
     private static HashSet<String> makeDigits(){
         HashSet<String> d = new HashSet<>();
@@ -58,7 +58,7 @@ public class Sudoku{
 
     /**
      * initialize Squares array
-     * @return
+     * @return Matrix of Squares with tag "11" and "12" and so on
      */
     private static String[][] createSquares(){
         int R = -1;
@@ -78,7 +78,7 @@ public class Sudoku{
     /**
      * initialize boxes map, which maps each box number to a set of cells belonging to it
      * 1st box has cells 11, 12, 13, 21, 22, 23, 31, 32, 33
-     * @return
+     * @return HashMap mapping numbered boxes to squares in that box
      */
     private static HashMap<Integer, HashSet<String>> createBoxes(){
         HashMap<Integer, HashSet<String>> map = new HashMap<>();
@@ -96,9 +96,9 @@ public class Sudoku{
 
     /**
      * Calculates the box in which a cell with row # = row and col # = col belongs to
-     * @param row
-     * @param col
-     * @return
+     * @param row row number
+     * @param col column number
+     * @return number indicating which box a square with row and col belongs to
      */
     private static Integer calcBox(int row, int col){
         if(row - 3 <= 0){
@@ -138,9 +138,8 @@ public class Sudoku{
         }
     }
 
-    /**
-     * Makes a map that maps each square to a set of all the squares in its row, column, and box
-     * @return
+    /** 
+     * @return HashMap that that maps each square to a set of all the squares in its row, column, and box
      */
     private static HashMap<String, HashSet<String>> createPeers(){
         HashMap<String, HashSet<String>> map = new HashMap<>();
@@ -157,10 +156,10 @@ public class Sudoku{
     }
 
     /**
-     * Adds all squares in square's row
-     * @param map
-     * @param square
-     * @param r
+     * Adds all squares in square's row, helper for createPeers()
+     * @param map map of square's peers
+     * @param square current square
+     * @param r row number
      */
     private static void addRowPeers(HashMap<String, HashSet<String>> map, String square, int r){
         for(String s : SQUARES[r]){
@@ -170,11 +169,11 @@ public class Sudoku{
         }
     }
 
-    /**
-     * Adds all squares in square's column
-     * @param map
-     * @param square
-     * @param c
+     /**
+     * Adds all squares in square's column, helper for createPeers()
+     * @param map map of square's peers
+     * @param square current square
+     * @param c column number
      */
     private static void addColPeers(HashMap<String, HashSet<String>> map, String square, int c){
         for(int i = 0; i < 9; i ++){
@@ -185,11 +184,11 @@ public class Sudoku{
         }
     }
 
-    /**
-     * Adds all squares in square's box
-     * @param map
-     * @param square
-     * @param b
+     /**
+     * Adds all squares in square's box, helper for createPeers()
+     * @param map map of square's peers
+     * @param square current square
+     * @param b box number
      */
     private static void addBoxPeers(HashMap<String, HashSet<String>> map, String square, int b){
         for(String s : BOXES.get(b)){
@@ -200,8 +199,7 @@ public class Sudoku{
     }
 
     /**
-     * Initializes a map of candidates, which maps each square to a set of the possible digits that it can take within the rules of Sudoku
-     * @return
+     * @return Initializes a map of candidates, which maps each square to a set of the possible digits that it can take within the rules of Sudoku
      */
     private HashMap<String, HashSet<String>> initializeCandidates(){
         HashMap<String, HashSet<String>> candidates = new HashMap<>();
@@ -217,8 +215,7 @@ public class Sudoku{
     }
 
     /**
-     * Maps each row to a set of the squares in that row
-     * @return
+     * @return Maps each row to a set of the squares in that row
      */
     private static HashMap<Integer, HashSet<String>> createRows(){
         HashMap<Integer, HashSet<String>> map = new HashMap<>();
@@ -234,8 +231,7 @@ public class Sudoku{
     }
     
     /**
-     * Maps each row to a set of the squares in that column
-     * @return
+     * @return Maps each row to a set of the squares in that column
      */
     private static HashMap<Integer, HashSet<String>> createCols(){
         HashMap<Integer, HashSet<String>> map = new HashMap<>();
@@ -251,10 +247,9 @@ public class Sudoku{
     }
 
     /**
-     * Returns a copy of square s candidates
-     * @param candidates
-     * @param s
-     * @return
+     * @param candidates map of candidates
+     * @param s square 
+     * @return Returns a copy of square s candidates
      */
     private HashSet<String> copyCandidates(HashMap<String, HashSet<String>> candidates, String s){
         HashSet<String> cands = new HashSet<>();
@@ -265,9 +260,8 @@ public class Sudoku{
     }
 
     /**
-     * Returns a copy of the candidates map
-     * @param candidates
-     * @return
+     * @param candidates candidates map
+     * @return Returns a copy of the candidates map
      */
     private HashMap<String, HashSet<String>> copyCandMap(HashMap<String, HashSet<String>> candidates){
         HashMap<String, HashSet<String>> map = new HashMap<>();
@@ -281,10 +275,10 @@ public class Sudoku{
 
     /**
      * Assigns a value d to square s by eliminating every other digit in square s candidates.
-     * @param candidates
-     * @param s
-     * @param d
-     * @return
+     * @param candidates candidates map
+     * @param s square s
+     * @param d digit d
+     * @return candidates map if no contradictions, otherwise returns null
      */
     private HashMap<String, HashSet<String>> assignValue(HashMap<String, HashSet<String>> candidates, String s, String d){
         HashSet<String> otherCands = copyCandidates(candidates, s);
@@ -299,11 +293,10 @@ public class Sudoku{
 
     /**
      * Eliminates digit d from square s candidates. Calls both constraint methods.
-     * Returns null if a contradiction was found, otherwise returns candidates.
-     * @param candidates
-     * @param s
-     * @param d
-     * @return
+     * @param candidates candidates map
+     * @param s square s
+     * @param d digit d
+     * @return Returns null if a contradiction was found, otherwise returns candidates.
      */
     private HashMap<String, HashSet<String>> eliminateValue(HashMap<String, HashSet<String>> candidates, String s, String d){
         HashSet<String> currentCands = candidates.get(s);
@@ -339,9 +332,9 @@ public class Sudoku{
     }
 
     /**
-     * Takes in a grid of digits and '.', and assigns the corresponding given digits to the appropriate square
-     * @param grid
-     * @return
+     * Takes in a grid, and assigns the corresponding given digits to the appropriate square
+     * @param grid grid of digits and '.'
+     * @return candidates map
      */
     public HashMap<String, HashSet<String>> parseGrid(String grid){
         HashMap<String, HashSet<String>> candidates = initializeCandidates();
@@ -360,9 +353,8 @@ public class Sudoku{
     }
 
     /**
-     * Returns a nicely formatted completed Sudoku puzzle
-     * @param candidates
-     * @return
+     * @param candidates candidates map
+     * @return Returns a nicely formatted completed Sudoku puzzle
      */
     private String display(HashMap<String, HashSet<String>> candidates){
         StringBuilder sb = new StringBuilder();
@@ -390,11 +382,11 @@ public class Sudoku{
     /**
      * Second constraint in the eliminate method:
      * If there is only one spot for a digit d to go in unit, then assign it there.
-     * @param d
-     * @param u
-     * @param candidates
-     * @param unit
-     * @return
+     * @param d digit d
+     * @param u which number unit
+     * @param candidates candidates map
+     * @param unit row, column, or box
+     * @return true if no contradiction found, otherwise false
      */
     private boolean constraintTwo(String d, int u, HashMap<String, HashSet<String>> candidates, HashMap<Integer, HashSet<String>> unit){
         ArrayList<String> temp = new ArrayList<>();
@@ -416,8 +408,8 @@ public class Sudoku{
 
     /**
      * Recursive searching method. Finds the square with the smallest number of possible digit, and then assigns it a random value, checking for contradictions along the way.
-     * @param candidates
-     * @return
+     * @param candidates candidates map
+     * @return candidates map
      */
     public HashMap<String, HashSet<String>> search(HashMap<String, HashSet<String>> candidates){
         boolean solved = true;
@@ -460,9 +452,8 @@ public class Sudoku{
     }
 
     /**
-     * Rather than displaying as a neat finished puzzle, it returns a string of digits, i.e "123456789987654321... "
-     * @param grid - initial puzzle
-     * @return
+     * @param grid initial puzzle
+     * @return Rather than displaying as a neat finished puzzle, it returns a string of digits, i.e "123456789987654321... "
      */
     public String solveAsLine(String grid){
         HashMap<String, HashSet<String>> cands = search(parseGrid(grid));
@@ -499,9 +490,8 @@ public class Sudoku{
     }
 
     /**
-     * 
-     * @param puzzles
-     * @return
+     * @param puzzles Map which maps puzzle number to string representation of puzzle - this is found with parseFile()
+     * @return Formatted string display of solved puzzle along with time taken to solve
      */
     private String parsePuzzles(HashMap<Integer, String> puzzles){
         StringBuilder sb = new StringBuilder();
@@ -517,30 +507,12 @@ public class Sudoku{
     }
 
     /**
-     * Similar to solveAsLine()
-     * @param candidates
-     * @return
-     */
-    public String displayPuzzleString(HashMap<String, HashSet<String>> candidates){
-        StringBuilder sb = new StringBuilder();
-        HashSet<String> curCands = new HashSet<>();
-        for(int r = 0; r < 9; r ++){
-            for(int c = 0; c < 9; c ++){
-                curCands = candidates.get(SQUARES[r][c]);
-                Iterator<String> iter = curCands.iterator();
-                sb.append(iter.next());
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
      * Helper method for SudokuUI class. Adds numAdded digits to a randomly created puzzle so make it easier for humans to solve.
-     * @param puzzle
-     * @param solution
-     * @param numAdded
-     * @param candidates
-     * @return
+     * @param puzzle current state of puzzle
+     * @param solution solution to puzzle
+     * @param numAdded number of given digits to be added
+     * @param candidates map of candidates
+     * @return String representation of puzzle
      */
     public String addGivenDigits(String puzzle, String solution, int numAdded, HashMap<String, HashSet<String>> candidates){
         int addedDigit = 0;
@@ -575,8 +547,8 @@ public class Sudoku{
     
     /**
      * Creates a random puzzle with the givenDigits specified
-     * @param givenDigits
-     * @return
+     * @param givenDigits number of digits that should be given
+     * @return string representation of puzzle
      */
     public String createRandomPuzzle(int givenDigits){
         HashMap<String, HashSet<String>> candidates = initializeCandidates();
@@ -621,8 +593,7 @@ public class Sudoku{
     }   
 
     /**
-     * Returns an ArrayList of the squares in SQUARES shuffled in a random order
-     * @return
+     * @return Returns an ArrayList of the squares in SQUARES shuffled in a random order
      */
     private ArrayList<String> shuffleSquares(){
         ArrayList<String> shuffledSquares = new ArrayList<>();
@@ -636,10 +607,9 @@ public class Sudoku{
     }
 
     /**
-     * Returns a random digit from square s candidates
-     * @param candidates
-     * @param s
-     * @return
+     * @param candidates candidates map
+     * @param s square s
+     * @return Returns a random digit from square s candidates
      */
     private String getRandomDigit(HashMap<String, HashSet<String>> candidates, String s){
         HashSet<String> cands = candidates.get(s);
@@ -648,9 +618,26 @@ public class Sudoku{
         return temp[rand.nextInt(cands.size()-1)];
     }
     
+    /**
+     * Similar to solveAsLine(), only doesn't solve the puzzle within the method
+     * @param candidates candidates map
+     * @return puzzles as a one line string
+     */
+    public String displayPuzzleString(HashMap<String, HashSet<String>> candidates){
+        StringBuilder sb = new StringBuilder();
+        HashSet<String> curCands = new HashSet<>();
+        for(int r = 0; r < 9; r ++){
+            for(int c = 0; c < 9; c ++){
+                curCands = candidates.get(SQUARES[r][c]);
+                Iterator<String> iter = curCands.iterator();
+                sb.append(iter.next());
+            }
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         //Sudoku su = new Sudoku();
-
         // Code to create 100,000 random puzzles and determine the average solve time
         // long max = 0;
         // long avg = 0;
@@ -669,7 +656,6 @@ public class Sudoku{
         //     if(min >= timeElapsed.toNanos()){
         //         min = timeElapsed.toNanos();
         //     }
-
         //     avg += timeElapsed.toNanos();
         // }
         // avg = avg / 100000;
