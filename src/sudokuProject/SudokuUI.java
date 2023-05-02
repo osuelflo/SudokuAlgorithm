@@ -377,19 +377,6 @@ public class SudokuUI {
         }
     }
 
-    // private void resetFill(){
-    //     Cell currentCell = cells.get(accessIndex);
-    //     currentCell.getCellShape().setFilled(false);
-    // }
-    
-    // private void pause(){
-    //     try{
-    //         Thread.sleep(2000);
-    //     } catch(Exception e){
-    //         System.out.println("shit");
-    //     }
-    // }
-
     /**
      * Moves the current cell selection by appropriately incrementing accessIndex. Bolds the cell at the resulting accessIndex.
      * Note: accessIndex begins at -1, so the first cell to be highlighted will be A1

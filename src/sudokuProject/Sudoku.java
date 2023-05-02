@@ -15,6 +15,8 @@ import java.time.*;
 import java.util.Random;
 
 /**
+ * @author Adam Schroeder, Owen Suelflow
+ * Sudoku Algorithm
  * Capable of creating and solving Sudoku puzzles using algorithm developed by Peter Norvig
  * https://norvig.com/sudoku.html
  */
