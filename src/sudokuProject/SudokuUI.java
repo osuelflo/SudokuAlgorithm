@@ -168,6 +168,7 @@ public class SudokuUI {
         initNumDigits = 30;
         squaresRemaining = 81;
         canvas.removeAll();
+        //Commented out but can be used to get a puzzle
         //puzzle = getPuzzleFromFile(new File("src/HardPuzzles.txt"));
         setUpPuzzle(initNumDigits);
         cells = new ArrayList<>();
@@ -280,7 +281,6 @@ public class SudokuUI {
                 currentCell.setFixed(true);
                 System.out.println("yay");
                 currentCell.getCellShape().setStrokeColor(Color.BLUE);
-                // currentCell.getCellShape().setStrokeWidth(1);
                 squaresRemaining -= 1;
                 if (squaresRemaining == 0) {
                     winScreen();
@@ -373,13 +373,12 @@ public class SudokuUI {
                 currentCell.getCellShape().setStrokeColor(Color.RED);
                 time += 5;
             }
-            // currentCell.setDisplay("");
         }
     }
 
     /**
      * Moves the current cell selection by appropriately incrementing accessIndex. Bolds the cell at the resulting accessIndex.
-     * Note: accessIndex begins at -1, so the first cell to be highlighted will be A1
+     * Note: accessIndex begins at -1, so the first cell to be highlighted will be 1,1 (or A1)
      */
     private void highlight(String direc) {
         if (accessIndex != -1) {
