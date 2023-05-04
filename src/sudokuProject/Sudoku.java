@@ -646,6 +646,7 @@ public class Sudoku{
     public static void main(String[] args) {
         //Sudoku su = new Sudoku();
         // Code to create 100,000 random puzzles and determine the average solve time
+        // Could have deleted this part, but we think it is useful to include.
         // long max = 0;
         // long avg = 0;
         // long min = Long.MAX_VALUE;
